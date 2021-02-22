@@ -60,6 +60,7 @@ builds/**/images/*
 # Secret file
 secrets.yml
 secrets.yaml
+passwords.txt
 
 # Dont include our binary
 convertee-twitch-bot
