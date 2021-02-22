@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/patrickmn/go-cache"
+	"github.com/spf13/viper"
 )
 
 type listResponse struct {
@@ -22,8 +23,6 @@ type listResponse struct {
 		Info string `json:"info"`
 	} `json:"error"`
 }
-
-const fixerAccessKey string = ""
 
 // Convert converts an amount using the Fixer List API
 func Convert(cache *cache.Cache, fromCurrency string, toCurrency string, amount float64) (float64, error) {
@@ -56,7 +55,7 @@ func Convert(cache *cache.Cache, fromCurrency string, toCurrency string, amount 
 }
 
 func fixerList() (listResponse, error) {
-	listRequestURL := fmt.Sprintf("http://data.fixer.io/api/latest?access_key=%s", fixerAccessKey)
+	listRequestURL := fmt.Sprintf("http://data.fixer.io/api/latest?access_key=%s", viper.GetString("fixer_api_key"))
 	response, err := http.Get(listRequestURL)
 	if err != nil {
 		return listResponse{}, err

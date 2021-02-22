@@ -57,5 +57,9 @@ builds/**/images/*
 # Anything under a tmp folder
 **/tmp/*
 
+# Secret file
+secrets.yml
+secrets.yaml
+
 # Dont include our binary
 convertee-twitch-bot

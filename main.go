@@ -11,6 +11,7 @@ import (
 
 	"github.com/gempir/go-twitch-irc/v2"
 	"github.com/patrickmn/go-cache"
+	"github.com/spf13/viper"
 )
 
 var mainCache *cache.Cache
@@ -23,7 +24,15 @@ func main() {
 	}
 	channel := argsWithoutProg[0]
 
-	client = twitch.NewClient("Convertee", "")
+	viper.SetConfigName("secrets")
+	viper.SetConfigType("yaml")
+	viper.AddConfigPath(".")
+	err := viper.ReadInConfig() // Find and read the config file
+	if err != nil {             // Handle errors reading the config file
+		panic(fmt.Errorf("Fatal error loading config file: %s", err))
+	}
+
+	client = twitch.NewClient(viper.GetString("twitch_username"), viper.GetString("twitch_oauth"))
 	mainCache = cache.New(30*time.Minute, 10*time.Minute)
 
 	convertRegex := regexp.MustCompile(`(?i)convert ([\d\.]+) (\w+) to (\w+)`)
