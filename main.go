@@ -41,6 +41,11 @@ func main() {
 
 	client.OnConnect(func() {
 		fmt.Println("Connected and listening!")
+		twitchColour := viper.GetString("twitch_colour")
+		if len(twitchColour) > 0 {
+			fmt.Println("Setting colour to", twitchColour)
+			client.Say(channel, fmt.Sprintf("/color %s", twitchColour))
+		}
 	})
 
 	client.OnPrivateMessage(func(message twitch.PrivateMessage) {
@@ -57,7 +62,6 @@ func main() {
 	})
 
 	client.Join(channel)
-	client.Say(channel, "/color SeaGreen")
 
 	fmt.Println("Connecting to #" + channel)
 	clientErr := client.Connect()

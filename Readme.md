@@ -24,6 +24,7 @@ go build
 ```yaml
 twitch_username: username
 twitch_oauth: oauth:tokeotokentoenontek
+twitch_colour: SeaGreen
 fixer_api_key: asdasdasdasdadasdasdasdsd
 ```
 
@@ -33,6 +34,9 @@ Sign up for a normal twitch account.
 
 You can get your twitch oauth token by visiting: https://twitchapps.com/tmi/
 More info at: https://dev.twitch.tv/docs/irc
+
+Available colours for normal twitch accounts:
+Blue, Coral, DodgerBlue, SpringGreen, YellowGreen, Green, OrangeRed, Red, GoldenRod, HotPink, CadetBlue, SeaGreen, Chocolate, BlueViolet, and Firebrick
 
 ### Fixer
 
