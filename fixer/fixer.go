@@ -2,7 +2,6 @@ package fixer
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -10,26 +9,6 @@ import (
 
 	"github.com/patrickmn/go-cache"
 )
-
-type convertResponse struct {
-	Success bool `json:"success"`
-	Query   struct {
-		From   string `json:"from"`
-		To     string `json:"to"`
-		Amount int    `json:"amount"`
-	} `json:"query"`
-	Info struct {
-		Timestamp int     `json:"timestamp"`
-		Rate      float64 `json:"rate"`
-	} `json:"info"`
-	Date   string  `json:"date"`
-	Result float64 `json:"result"`
-	Error  struct {
-		Code int    `json:"code"`
-		Type string `json:"type"`
-		Info string `json:"info"`
-	} `json:"error"`
-}
 
 type listResponse struct {
 	Success   bool               `json:"success"`
@@ -86,20 +65,4 @@ func fixerList() (listResponse, error) {
 	var listObject listResponse
 	json.Unmarshal(responseData, &listObject)
 	return listObject, nil
-}
-
-func fixerConvert(fromCurrency string, toCurrency string, amount float64) (float64, error) {
-	conversionRequestURL := fmt.Sprintf("http://data.fixer.io/api/convert?access_key=%s&from=%s&to=%s&amount=%f", fixerAccessKey, fromCurrency, toCurrency, amount)
-	response, err := http.Get(conversionRequestURL)
-	if err != nil {
-		return 0, err
-	}
-	responseData, err := ioutil.ReadAll(response.Body)
-	var responseObject convertResponse
-	json.Unmarshal(responseData, &responseObject)
-	if responseObject.Success {
-		return responseObject.Result, nil
-	} else {
-		return 0, errors.New("Failed")
-	}
 }
