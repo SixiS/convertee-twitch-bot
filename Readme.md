@@ -1,4 +1,4 @@
-# Convertee
+# Convertee Twich Bot
 
 Converty twitch bot to listen in a channel and do forex conversions.
 
