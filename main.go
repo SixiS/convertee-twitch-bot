@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"regexp"
 	"strconv"
 	"time"
@@ -16,6 +17,12 @@ var mainCache *cache.Cache
 var client *twitch.Client
 
 func main() {
+	argsWithoutProg := os.Args[1:]
+	if len(argsWithoutProg) == 0 {
+		panic("Channel must be provided as command line arg.")
+	}
+	channel := argsWithoutProg[0]
+
 	client = twitch.NewClient("Convertee", "")
 	mainCache = cache.New(30*time.Minute, 10*time.Minute)
 
@@ -25,6 +32,11 @@ func main() {
 
 	var amount float64
 	var err error
+
+	client.OnConnect(func() {
+		fmt.Println("Connected and listening!")
+	})
+
 	client.OnPrivateMessage(func(message twitch.PrivateMessage) {
 		if matched := convertRegex.FindAllStringSubmatch(message.Message, -1); len(matched) > 0 {
 			amount, err = convertResponseHandler(matched[0][2], matched[0][3], matched[0][1])
@@ -38,9 +50,10 @@ func main() {
 		}
 	})
 
-	client.Join("Convertee")
-	client.Say("Convertee", "/color SeaGreen")
+	client.Join(channel)
+	client.Say(channel, "/color SeaGreen")
 
+	fmt.Println("Connecting to #" + channel)
 	clientErr := client.Connect()
 	if clientErr != nil {
 		panic(clientErr)
