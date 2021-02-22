@@ -1,3 +1,8 @@
 # Convertee
 
-Converty twitch bot - everything is hard coded.
+Converty twitch bot to listen in channels and do forex conversions.
+
+```
+go build
+./convertee-twitch-bot channel
+```

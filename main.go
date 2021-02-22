@@ -59,9 +59,9 @@ func main() {
 
 func errorOrMessage(channel string, err error, responseMessage string) {
 	if err != nil {
-		client.Say(channel, "/me || "+err.Error())
+		client.Say(channel, "/me : "+err.Error())
 	} else {
-		client.Say(channel, "/me || "+responseMessage)
+		client.Say(channel, "/me : "+responseMessage)
 	}
 }
 
@@ -75,7 +75,7 @@ func convertResponseHandler(fromCurrency string, toCurrency string, amountAsStri
 
 	convertedAmount, err := fixer.Convert(mainCache, fromCurrency, toCurrency, amount)
 	if err != nil {
-		return 0, fmt.Errorf("Unable to convert %q %s to %s - conversion broke", amountAsString, fromCurrency, toCurrency)
+		return 0, fmt.Errorf("Unable to convert %q %s to %s - %s", amountAsString, fromCurrency, toCurrency, err.Error())
 	}
 
 	return convertedAmount, nil

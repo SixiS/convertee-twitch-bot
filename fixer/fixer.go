@@ -63,12 +63,12 @@ func Convert(cache *cache.Cache, fromCurrency string, toCurrency string, amount 
 
 	fromRate, ok := listObject.Rates[strings.ToUpper(fromCurrency)]
 	if !listObject.Success || !ok {
-		return 0, errors.New("From currency not supported")
+		return 0, fmt.Errorf("Couldn't find FROM currency %q", fromCurrency)
 	}
 
 	toRate, ok := listObject.Rates[strings.ToUpper(toCurrency)]
 	if !listObject.Success || !ok {
-		return 0, errors.New("To currency not supported")
+		return 0, fmt.Errorf("Couldn't find TO currency %q", toCurrency)
 	}
 
 	EURPrice := amount / fromRate
