@@ -1,5 +1,7 @@
 # Convertee Twich Bot
 
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+
 Converty twitch bot to listen in a channel and do forex conversions.
 
 Listens for `convert [number] [currency_code] to [currency_code]`
