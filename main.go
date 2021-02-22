@@ -45,13 +45,13 @@ func main() {
 
 	client.OnPrivateMessage(func(message twitch.PrivateMessage) {
 		if matched := convertRegex.FindAllStringSubmatch(message.Message, -1); len(matched) > 0 {
-			amount, err := convertResponseHandler(matched[0][2], matched[0][3], matched[0][1])
+			amount, err := convertAmount(matched[0][2], matched[0][3], matched[0][1])
 			errorOrMessage(message.Channel, err, fmt.Sprintf("%s %s IS %.2f %s", matched[0][1], matched[0][2], amount, matched[0][3]))
 		} else if matched := randRegex.FindAllStringSubmatch(message.Message, -1); len(matched) > 0 {
-			amount, err := convertResponseHandler("ZAR", "USD", matched[0][1])
+			amount, err := convertAmount("ZAR", "USD", matched[0][1])
 			errorOrMessage(message.Channel, err, fmt.Sprintf("R%s = $%.2f", matched[0][1], amount))
 		} else if matched := dollarRegex.FindAllStringSubmatch(message.Message, -1); len(matched) > 0 {
-			amount, err := convertResponseHandler("USD", "ZAR", matched[0][1])
+			amount, err := convertAmount("USD", "ZAR", matched[0][1])
 			errorOrMessage(message.Channel, err, fmt.Sprintf("$%s = R%.2f", matched[0][1], amount))
 		}
 	})
@@ -74,7 +74,7 @@ func errorOrMessage(channel string, err error, responseMessage string) {
 	}
 }
 
-func convertResponseHandler(fromCurrency string, toCurrency string, amountAsString string) (float64, error) {
+func convertAmount(fromCurrency string, toCurrency string, amountAsString string) (float64, error) {
 	var amount float64
 	var err error
 

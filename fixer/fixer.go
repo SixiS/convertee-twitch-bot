@@ -2,6 +2,7 @@ package fixer
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -36,16 +37,19 @@ func Convert(cache *cache.Cache, fromCurrency string, toCurrency string, amount 
 		if err != nil {
 			return 0, err
 		}
+		if !listObject.Success {
+			return 0, errors.New(listObject.Error.Info)
+		}
 		cache.SetDefault("fixerList", &listObject)
 	}
 
 	fromRate, ok := listObject.Rates[strings.ToUpper(fromCurrency)]
-	if !listObject.Success || !ok {
+	if !ok {
 		return 0, fmt.Errorf("Couldn't find FROM currency %q", fromCurrency)
 	}
 
 	toRate, ok := listObject.Rates[strings.ToUpper(toCurrency)]
-	if !listObject.Success || !ok {
+	if !ok {
 		return 0, fmt.Errorf("Couldn't find TO currency %q", toCurrency)
 	}
 
