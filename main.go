@@ -63,10 +63,13 @@ func main() {
 
 	client.Join(channel)
 
-	fmt.Println("Connecting to #" + channel)
-	clientErr := client.Connect()
-	if clientErr != nil {
-		panic(clientErr)
+	for true {
+		fmt.Println("Connecting to #" + channel)
+		clientErr := client.Connect()
+		if clientErr != nil {
+			fmt.Println("Error with connection to twitch... sleeping 5 seconds and retrying.")
+			time.Sleep(2 * time.Second)
+		}
 	}
 }
 
