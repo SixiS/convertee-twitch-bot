@@ -8,14 +8,17 @@ import (
 	"time"
 
 	"convertee-twitch-bot/fixer"
+	"convertee-twitch-bot/googletranslate"
 
 	"github.com/gempir/go-twitch-irc/v2"
 	"github.com/patrickmn/go-cache"
 	"github.com/spf13/viper"
+	"golang.org/x/text/language"
 )
 
 var mainCache *cache.Cache
 var client *twitch.Client
+var googleTranslateClient *googletranslate.TranslateClient
 
 func main() {
 	argsWithoutProg := os.Args[1:]
@@ -32,12 +35,15 @@ func main() {
 		panic(fmt.Errorf("Fatal error loading config file: %s", err))
 	}
 
+	googleTranslateClient = googletranslate.NewTranslateClient()
+
 	client = twitch.NewClient(viper.GetString("twitch_username"), viper.GetString("twitch_oauth"))
 	mainCache = cache.New(30*time.Minute, 10*time.Minute)
 
 	convertRegex := regexp.MustCompile(`(?i)convert ([\d\.]+) (\w+) to (\w+)`)
 	randRegex := regexp.MustCompile(`\bR([\d\.]+)\b`)
 	dollarRegex := regexp.MustCompile(`\$([\d\.]+)\b`)
+	translateRegex := regexp.MustCompile(`(?i)translate (.+)`)
 
 	client.OnConnect(func() {
 		fmt.Println("Connected and listening!")
@@ -58,6 +64,9 @@ func main() {
 		} else if matched := dollarRegex.FindAllStringSubmatch(message.Message, -1); len(matched) > 0 {
 			amount, err := convertAmount("USD", "ZAR", matched[0][1])
 			errorOrMessage(message.Channel, err, fmt.Sprintf("$%s = R%.2f", matched[0][1], amount))
+		} else if matched := translateRegex.FindAllStringSubmatch(message.Message, -1); len(matched) > 0 {
+			translatedText, err := googleTranslateClient.Translate(matched[0][1], language.English)
+			errorOrMessage(message.Channel, err, fmt.Sprintf("%q in english is %q", matched[0][1], translatedText))
 		}
 	})
 

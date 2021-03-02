@@ -26,6 +26,7 @@ twitch_username: username
 twitch_oauth: oauth:tokeotokentoenontek
 twitch_colour: SeaGreen
 fixer_api_key: asdasdasdasdadasdasdasdsd
+google_translate_api_key: asdasdasdasdasdasdasd
 ```
 
 ### Twitch
