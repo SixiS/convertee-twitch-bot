@@ -43,7 +43,7 @@ func main() {
 	convertRegex := regexp.MustCompile(`(?i)convert ([\d\.]+) (\w+) to (\w+)`)
 	randRegex := regexp.MustCompile(`\bR([\d\.]+)\b`)
 	dollarRegex := regexp.MustCompile(`\$([\d\.]+)\b`)
-	translateRegex := regexp.MustCompile(`(?i)translate (.+)`)
+	translateRegex := regexp.MustCompile(`(?i)\!translate (.+)`)
 
 	client.OnConnect(func() {
 		fmt.Println("Connected and listening!")
