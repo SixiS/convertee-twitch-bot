@@ -10,6 +10,7 @@ import (
 	"convertee-twitch-bot/fixer"
 	"convertee-twitch-bot/googletranslate"
 
+	profanityfilter "github.com/SixiS/fast-profanity-filter"
 	"github.com/gempir/go-twitch-irc/v2"
 	"github.com/patrickmn/go-cache"
 	"github.com/spf13/viper"
@@ -19,14 +20,17 @@ import (
 var mainCache *cache.Cache
 var client *twitch.Client
 var googleTranslateClient *googletranslate.TranslateClient
+var pf *profanityfilter.ProfanityFilter
 
 func main() {
+	// Get channel from Args
 	argsWithoutProg := os.Args[1:]
 	if len(argsWithoutProg) == 0 {
 		panic("Channel must be provided as command line arg.")
 	}
 	channel := argsWithoutProg[0]
 
+	// Initialise All The Things
 	viper.SetConfigName("secrets")
 	viper.SetConfigType("yaml")
 	viper.AddConfigPath(".")
@@ -40,6 +44,9 @@ func main() {
 	client = twitch.NewClient(viper.GetString("twitch_username"), viper.GetString("twitch_oauth"))
 	mainCache = cache.New(30*time.Minute, 10*time.Minute)
 
+	pf = profanityfilter.NewProfanityFilerFromCsvFile("./blocked_words.csv")
+
+	// Chat Regexes
 	convertRegex := regexp.MustCompile(`(?i)convert ([\d\.]+) (\w+) to (\w+)`)
 	randRegex := regexp.MustCompile(`\bR([\d\.]+)\b`)
 	dollarRegex := regexp.MustCompile(`\$([\d\.]+)\b`)
@@ -66,7 +73,7 @@ func main() {
 			errorOrMessage(message.Channel, err, fmt.Sprintf("$%s = R%.2f", matched[0][1], amount))
 		} else if matched := translateRegex.FindAllStringSubmatch(message.Message, -1); len(matched) > 0 {
 			translatedText, err := googleTranslateClient.Translate(matched[0][1], language.English)
-			errorOrMessage(message.Channel, err, fmt.Sprintf("%q in english is %q", matched[0][1], translatedText))
+			errorOrMessage(message.Channel, err, fmt.Sprintf("%q in english is %q", pf.ReplaceProfanities(matched[0][1]), pf.ReplaceProfanities(translatedText)))
 		}
 	})
 
